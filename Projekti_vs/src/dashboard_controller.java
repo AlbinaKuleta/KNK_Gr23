@@ -916,3 +916,355 @@ public class dashboardController implements Initializable {
         }
     }
 
+
+    public void availableCourseUpdate() {
+
+        String updateData = "UPDATE course SET description = '"
+                + availableCourse_description.getText() + "', degree = '"
+                + availableCourse_degree.getText() + "' WHERE course = '"
+                + availableCourse_course.getText() + "'";
+
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+
+            if (availableCourse_course.getText().isEmpty()
+                    || availableCourse_description.getText().isEmpty()
+                    || availableCourse_degree.getText().isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+            } else {
+
+                alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to UPDATE Course: " + availableCourse_course.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(updateData);
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Updated!");
+                    alert.showAndWait();
+
+                    // TO BECOME UPDATED OUR TABLEVIEW ONCE THE DATA WE GAVE SUCCESSFUL
+                    availableCourseShowListData();
+                    // TO CLEAR THE TEXT FIELDS
+                    availableCourseClear();
+
+                } else {
+                    return;
+                }
+
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void availableCourseDelete() {
+
+        String deleteData = "DELETE FROM course WHERE course = '"
+                + availableCourse_course.getText() + "'";
+
+        connect = database.connectDb();
+
+        try {
+            Alert alert;
+
+            if (availableCourse_course.getText().isEmpty()
+                    || availableCourse_description.getText().isEmpty()
+                    || availableCourse_degree.getText().isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+            } else {
+//                ALL GOOD GUYS! NOW LETS PROCEED TO ADD STUDENTS FORM
+                alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to DELETE Course: " + availableCourse_course.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(deleteData);
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Deleted!");
+                    alert.showAndWait();
+
+                    // TO BECOME UPDATED OUR TABLEVIEW ONCE THE DATA WE GAVE SUCCESSFUL
+                    availableCourseShowListData();
+                    // TO CLEAR THE TEXT FIELDS
+                    availableCourseClear();
+
+                } else {
+                    return;
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void availableCourseClear() {
+        availableCourse_course.setText("");
+        availableCourse_description.setText("");
+        availableCourse_degree.setText("");
+    }
+
+    public ObservableList<courseData> availableCourseListData() {
+
+        ObservableList<courseData> listData = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM course";
+
+        connect = database.connectDb();
+
+        try {
+            courseData courseD;
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            while (result.next()) {
+                courseD = new courseData(result.getString("course"),
+                        result.getString("description"),
+                        result.getString("degree"));
+
+                listData.add(courseD);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
+
+    private ObservableList<courseData> availableCourseList;
+
+    public void availableCourseShowListData() {
+        availableCourseList = availableCourseListData();
+
+        availableCourse_col_course.setCellValueFactory(new PropertyValueFactory<>("course"));
+        availableCourse_col_description.setCellValueFactory(new PropertyValueFactory<>("description"));
+        availableCourse_col_degree.setCellValueFactory(new PropertyValueFactory<>("degree"));
+
+        availableCourse_tableView.setItems(availableCourseList);
+
+    }
+
+    public void availableCourseSelect() {
+        courseData courseD = availableCourse_tableView.getSelectionModel().getSelectedItem();
+        int num = availableCourse_tableView.getSelectionModel().getSelectedIndex();
+
+        if ((num - 1) < -1) {
+            return;
+        }
+
+        availableCourse_course.setText(courseD.getCourse());
+        availableCourse_description.setText(courseD.getDescription());
+        availableCourse_degree.setText(courseD.getDegree());
+
+    }
+
+    public void studentGradesUpdate() {
+        double finalCheck1 = 0;
+        double finalCheck2 = 0;
+
+        String checkData = "SELECT * FROM student_grade WHERE studentNum = '"
+                + studentGrade_studentNum.getText() + "'";
+
+        connect = database.connectDb();
+
+        double finalResult = 0;
+
+        try {
+
+            prepare = connect.prepareStatement(checkData);
+            result = prepare.executeQuery();
+
+            if (result.next()) {
+                finalCheck1 = result.getDouble("first_sem");
+                finalCheck2 = result.getDouble("second_sem");
+            }
+
+            if (finalCheck1 == 0 || finalCheck2 == 0) {
+                finalResult = 0;
+            } else { //LIKE (X+Y)/2 AVE WE NEED TO FIND FOR FINALS
+                finalResult = (Double.parseDouble(studentGrade_firstSem.getText())
+                        + Double.parseDouble(studentGrade_secondSem.getText()) / 2);
+            }
+
+            String updateData = "UPDATE student_grade SET "
+                    + " year = '" + studentGrade_year.getText()
+                    + "', course = '" + studentGrade_course.getText()
+                    + "', first_sem = '" + studentGrade_firstSem.getText()
+                    + "', second_sem = '" + studentGrade_secondSem.getText()
+                    + "', final = '" + finalResult + "' WHERE studentNum = '"
+                    + studentGrade_studentNum.getText() + "'";
+
+            Alert alert;
+
+            if (studentGrade_studentNum.getText().isEmpty()
+                    || studentGrade_year.getText().isEmpty()
+                    || studentGrade_course.getText().isEmpty()) {
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+
+            } else {
+
+                alert = new Alert(AlertType.CONFIRMATION);
+                alert.setTitle("Confirmation Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Are you sure you want to UPDATE Student #" + studentGrade_studentNum.getText() + "?");
+                Optional<ButtonType> option = alert.showAndWait();
+
+                if (option.get().equals(ButtonType.OK)) {
+                    statement = connect.createStatement();
+                    statement.executeUpdate(updateData);
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Updated!");
+                    alert.showAndWait();
+
+                    // TO UPDATE THE TABLEVIEW
+                    studentGradesShowListData();
+                } else {
+                    return;
+                }
+
+            }// NOT WE ARE CLOSER TO THE ENDING PART  :) LETS PROCEED TO DASHBOARD FORM
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void studentGradesClear() {
+        studentGrade_studentNum.setText("");
+        studentGrade_year.setText("");
+        studentGrade_course.setText("");
+        studentGrade_firstSem.setText("");
+        studentGrade_secondSem.setText("");
+    }
+
+    public ObservableList<studentData> studentGradesListData() {
+
+        ObservableList<studentData> listData = FXCollections.observableArrayList();
+
+        String sql = "SELECT * FROM student_grade";
+
+        connect = database.connectDb();
+
+        try {
+            studentData studentD;
+
+            prepare = connect.prepareStatement(sql);
+            result = prepare.executeQuery();
+
+            while (result.next()) {
+                studentD = new studentData(result.getInt("studentNum"),
+                        result.getString("year"),
+                        result.getString("course"),
+                        result.getDouble("first_sem"),
+                        result.getDouble("second_sem"),
+                        result.getDouble("final"));
+
+                listData.add(studentD);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return listData;
+    }
+
+    private ObservableList<studentData> studentGradesList;
+
+    public void studentGradesShowListData() {
+        studentGradesList = studentGradesListData();
+
+        studentGrade_col_studentNum.setCellValueFactory(new PropertyValueFactory<>("studentNum"));
+        studentGrade_col_year.setCellValueFactory(new PropertyValueFactory<>("year"));
+        studentGrade_col_course.setCellValueFactory(new PropertyValueFactory<>("course"));
+        studentGrade_col_firstSem.setCellValueFactory(new PropertyValueFactory<>("firstSem"));
+        studentGrade_col_secondSem.setCellValueFactory(new PropertyValueFactory<>("secondSem"));
+        studentGrade_col_final.setCellValueFactory(new PropertyValueFactory<>("finals"));
+//        WE NEED TO FIX THE DELETE ON ADD STUDENT FORM
+        studentGrade_tableView.setItems(studentGradesList);
+
+    }
+
+    public void studentGradesSelect() {
+
+        studentData studentD = studentGrade_tableView.getSelectionModel().getSelectedItem();
+        int num = studentGrade_tableView.getSelectionModel().getSelectedIndex();
+
+        if ((num - 1) < -1) {
+            return;
+        }
+
+        studentGrade_studentNum.setText(String.valueOf(studentD.getStudentNum()));
+        studentGrade_year.setText(studentD.getYear());
+        studentGrade_course.setText(studentD.getCourse());
+        studentGrade_firstSem.setText(String.valueOf(studentD.getFirstSem()));
+        studentGrade_secondSem.setText(String.valueOf(studentD.getSecondSem()));
+    }
+
+    public void studentGradesSearch() {
+
+        FilteredList<studentData> filter = new FilteredList<>(studentGradesList, e -> true);
+
+        studentGrade_search.textProperty().addListener((Observable, oldValue, newValue) -> {
+
+            filter.setPredicate(predicateStudentData -> {
+
+                if (newValue.isEmpty() || newValue == null) {
+                    return true;
+                }
+                String searchKey = newValue.toLowerCase();
+
+                if (predicateStudentData.getStudentNum().toString().contains(searchKey)) {
+                    return true;
+                } else if (predicateStudentData.getYear().toLowerCase().contains(searchKey)) {
+                    return true;
+                } else if (predicateStudentData.getCourse().toLowerCase().contains(searchKey)) {
+                    return true;
+                } else if (predicateStudentData.getFirstSem().toString().contains(searchKey)) {
+                    return true;
+                } else if (predicateStudentData.getSecondSem().toString().contains(searchKey)) {
+                    return true;
+                } else if (predicateStudentData.getFinals().toString().contains(searchKey)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            });
+        });
+
+        SortedList<studentData> sortList = new SortedList<>(filter);
+
+        sortList.comparatorProperty().bind(studentGrade_tableView.comparatorProperty());
+        studentGrade_tableView.setItems(sortList);
+
+    }
