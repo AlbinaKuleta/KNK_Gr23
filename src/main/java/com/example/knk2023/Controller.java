@@ -28,7 +28,7 @@ public class Controller {
 
     public void loginButtonOnAction(ActionEvent e) {
 
-        if(usernameTextField.getText().isBlank() == false && passwordPasswordField.getText().isBlank() == false) {
+        if(!usernameTextField.getText().isBlank() && !passwordPasswordField.getText().isBlank()) {
           //  loginMessageLabel.setText("You try to login!");
             validateLogin();
         } else{
@@ -43,7 +43,7 @@ public class Controller {
     public void validateLogin(){
         DatabaseConnection connectNow = new DatabaseConnection();
         Connection connectDB  = connectNow.getConnection();
-        String verifyLogin = "SELECT count(1) FROM useraccounts WHERE username = '' + usernameTextField.getText() + AND password = '' + passwordPasswordField.getText() + ''";
+        String verifyLogin = "SELECT count(1) FROM useraccounts WHERE username = '" + usernameTextField.getText() + "' AND password = '" + passwordPasswordField.getText() + "'";
    try{
 
      Statement statement = connectDB.createStatement();
