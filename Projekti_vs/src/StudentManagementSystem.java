@@ -12,5 +12,14 @@ public class courseData {
         this.degree = degree;
     }
    
+     public String getCourse(){
+        return course;
+    }
+    public String getDescription(){
+        return description;
+    }
+    public String getDegree(){
+        return degree;
+    }
     
 }
