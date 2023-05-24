@@ -64,3 +64,71 @@ public class FXMLDocumentController implements Initializable {
             prepare.setString(2, password.getText());
             
             result = prepare.executeQuery();
+            //            CHECK IF FIELDS ARE EMPTTY
+            if(username.getText().isEmpty() || password.getText().isEmpty()){
+                alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Error Message");
+                alert.setHeaderText(null);
+                alert.setContentText("Please fill all blank fields");
+                alert.showAndWait();
+            }else{
+                if(result.next()){
+//                    THEN PROCEED TO DASHBOARD FORM
+
+                    getData.username = username.getText();
+
+                    alert = new Alert(AlertType.INFORMATION);
+                    alert.setTitle("Information Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Successfully Login!");
+                    alert.showAndWait();
+                    
+//                    TO HIDE THE LOGIN FORM
+                    loginBtn.getScene().getWindow().hide();
+                    //THE DASHBOARD 
+                    Parent root = FXMLLoader.load(getClass().getResource("dashboard.fxml"));
+                    
+                    Stage stage = new Stage();
+                    Scene scene = new Scene(root);
+                    
+                    root.setOnMousePressed((MouseEvent event) ->{
+                        x = event.getSceneX();
+                        y = event.getSceneY();
+                    });
+                    
+                    root.setOnMouseDragged((MouseEvent event) ->{
+                        stage.setX(event.getScreenX() - x);
+                        stage.setY(event.getScreenY() - y);
+                    });
+                    
+                    stage.initStyle(StageStyle.TRANSPARENT);
+                    
+                    stage.setScene(scene);
+                    stage.show();
+                    
+                }else{
+                    // THEN ERROR MESSAGE WILL APPEAR
+                    alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Error Message");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Wrong Username/Password");
+                    alert.showAndWait();
+                }
+            }
+        }catch(Exception e){e.printStackTrace();}
+        
+    }
+    
+    public void close(){
+        System.exit(0);
+    }
+   
+    
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+       
+    }    
+    
+}
+
+
