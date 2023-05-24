@@ -20,6 +20,26 @@ public class StudentManagementSystem extends Application {
         
         Scene scene = new Scene(root);
 
+        root.setOnMousePressed((MouseEvent event) ->{
+            x = event.getSceneX();
+            y = event.getSceneY();
+        });
+        
+        root.setOnMouseDragged((MouseEvent event) ->{
+            stage.setX(event.getScreenX() - x);
+            stage.setY(event.getScreenY() - y);
+            
+            stage.setOpacity(.8);
+        });
+        
+        root.setOnMouseReleased((MouseEvent event) ->{
+            stage.setOpacity(1);
+        });
+        
+        stage.initStyle(StageStyle.TRANSPARENT);
+
+        stage.setScene(scene);
+        stage.show();
     }
 
     public static void main(String[] args) {
