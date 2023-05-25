@@ -46,11 +46,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-/**
- *
- * SUBSCRIBE OUR YOUTUBE CHANNEL -> https://www.youtube.com/channel/UCPgcmw0LXToDn49akUEJBkQ
- * THANKS FOR YOUR SUPPORT : )
- */
+
 public class dashboardController implements Initializable {
 
     @FXML
@@ -788,8 +784,7 @@ public class dashboardController implements Initializable {
         addStudents_status.setItems(ObList);
     }
 
-    //    NOW WE NEED THE COURSE, SO LETS WORK NOW THE AVAILABLE COURSE FORM : )
-//    LETS WORK FIRST THE ADD STUDENTS FORM : )
+
     public ObservableList<studentData> addStudentsListData() {
 
         ObservableList<studentData> listStudents = FXCollections.observableArrayList();
