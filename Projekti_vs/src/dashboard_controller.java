@@ -1268,3 +1268,173 @@ public class dashboardController implements Initializable {
         studentGrade_tableView.setItems(sortList);
 
     }
+
+    private double x = 0;
+    private double y = 0;
+
+    public void logout() {
+
+        try {
+
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Confirmation Message");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to logout?");
+
+            Optional<ButtonType> option = alert.showAndWait();
+
+            if (option.get().equals(ButtonType.OK)) {
+
+                //HIDE YOUR DASHBOARD FORM
+                logout.getScene().getWindow().hide();
+
+                //LINK YOUR LOGIN FORM
+                Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
+                Stage stage = new Stage();
+                Scene scene = new Scene(root);
+
+                root.setOnMousePressed((MouseEvent event) -> {
+                    x = event.getSceneX();
+                    y = event.getSceneY();
+                });
+
+                root.setOnMouseDragged((MouseEvent event) -> {
+                    stage.setX(event.getScreenX() - x);
+                    stage.setY(event.getScreenY() - y);
+
+                    stage.setOpacity(.8);
+                });
+
+                root.setOnMouseReleased((MouseEvent event) -> {
+                    stage.setOpacity(1);
+                });
+
+                stage.initStyle(StageStyle.TRANSPARENT);
+
+                stage.setScene(scene);
+                stage.show();
+
+            } else {
+                return;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void displayUsername(){
+        username.setText(getData.username);
+    }
+    // THATS IT FOR THESE VIDEOS, THANKS FOR WATCHING!! SUBSCRIBE AND TURN ON NOTIFICATION
+//    TO NOTIF YOU FOR MORE UPCOMING VIDEOS THANKS FOR THE SUPPORT! : )
+    public void defaultNav(){
+        home_btn.setStyle("-fx-background-color:linear-gradient(to bottom right, #3f82ae, #26bf7d);");
+    }
+
+    public void switchForm(ActionEvent event) {
+        if (event.getSource() == home_btn) {
+            home_form.setVisible(true);
+            addStudents_form.setVisible(false);
+            availableCourse_form.setVisible(false);
+            studentGrade_form.setVisible(false);
+
+            home_btn.setStyle("-fx-background-color:linear-gradient(to bottom right, #3f82ae, #26bf7d);");
+            addStudents_btn.setStyle("-fx-background-color:transparent");
+            availableCourse_btn.setStyle("-fx-background-color:transparent");
+            studentGrade_btn.setStyle("-fx-background-color:transparent");
+
+            homeDisplayTotalEnrolledStudents();
+            homeDisplayMaleEnrolled();
+            homeDisplayFemaleEnrolled();
+            homeDisplayEnrolledMaleChart();
+            homeDisplayFemaleEnrolledChart();
+            homeDisplayTotalEnrolledChart();
+
+        } else if (event.getSource() == addStudents_btn) {
+            home_form.setVisible(false);
+            addStudents_form.setVisible(true);
+            availableCourse_form.setVisible(false);
+            studentGrade_form.setVisible(false);
+
+            addStudents_btn.setStyle("-fx-background-color:linear-gradient(to bottom right, #3f82ae, #26bf7d);");
+            home_btn.setStyle("-fx-background-color:transparent");
+            availableCourse_btn.setStyle("-fx-background-color:transparent");
+            studentGrade_btn.setStyle("-fx-background-color:transparent");
+
+//            TO BECOME UPDATED ONCE YOU CLICK THE ADD STUDENTS BUTTON ON NAV
+            addStudentsShowListData();
+            addStudentsYearList();
+            addStudentsGenderList();
+            addStudentsStatusList();
+            addStudentsCourseList();
+            addStudentsSearch();
+
+        } else if (event.getSource() == availableCourse_btn) {
+            home_form.setVisible(false);
+            addStudents_form.setVisible(false);
+            availableCourse_form.setVisible(true);
+            studentGrade_form.setVisible(false);
+
+            availableCourse_btn.setStyle("-fx-background-color:linear-gradient(to bottom right, #3f82ae, #26bf7d);");
+            addStudents_btn.setStyle("-fx-background-color:transparent");
+            home_btn.setStyle("-fx-background-color:transparent");
+            studentGrade_btn.setStyle("-fx-background-color:transparent");
+
+            availableCourseShowListData();
+
+        } else if (event.getSource() == studentGrade_btn) {
+            home_form.setVisible(false);
+            addStudents_form.setVisible(false);
+            availableCourse_form.setVisible(false);
+            studentGrade_form.setVisible(true);
+
+            studentGrade_btn.setStyle("-fx-background-color:linear-gradient(to bottom right, #3f82ae, #26bf7d);");
+            addStudents_btn.setStyle("-fx-background-color:transparent");
+            availableCourse_btn.setStyle("-fx-background-color:transparent");
+            home_btn.setStyle("-fx-background-color:transparent");
+
+            studentGradesShowListData();
+            studentGradesSearch();
+
+        }
+    }
+
+    public void close() {
+        System.exit(0);
+    }
+
+    public void minimize() {
+        Stage stage = (Stage) main_form.getScene().getWindow();
+        stage.setIconified(true);
+    }
+
+    // SORRY ABOUT THAT, I JUST NAMED THE DIFFERENT COMPONENTS WITH THE SAME NAME
+    // MAKE SURE THAT THE NAME YOU GAVE TO THEM ARE DIFFERENT TO THE OTHER OKAY?
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        displayUsername();
+        defaultNav();
+
+        homeDisplayTotalEnrolledStudents();
+        homeDisplayMaleEnrolled();
+        homeDisplayFemaleEnrolled();
+        homeDisplayEnrolledMaleChart();
+        homeDisplayFemaleEnrolledChart();
+        homeDisplayTotalEnrolledChart();
+
+        // TO SHOW IMMIDIATELY WHEN WE PROCEED TO DASHBOARD APPLICATION FORM
+        addStudentsShowListData();
+        addStudentsYearList();
+        addStudentsGenderList();
+        addStudentsStatusList();
+        addStudentsCourseList();
+
+        availableCourseShowListData();
+
+        studentGradesShowListData();
+
+    }
+
+}
