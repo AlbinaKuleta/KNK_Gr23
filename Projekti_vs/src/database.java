@@ -9,7 +9,7 @@ public class database {
     public static Connection connectDb(){
 
         try{
-
+//
             Class.forName("com.mysql.jdbc.Driver");
 
             Connection connect = DriverManager.getConnection("jdbc:mysql://localhost/studentdata", "root", "");
